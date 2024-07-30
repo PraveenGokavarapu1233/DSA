@@ -1,0 +1,74 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <iomanip>
+#include <algorithm>
+
+class Expense {
+public:
+    double amount;
+    std::string category;
+    std::string date;
+
+    Expense(double amt, const std::string& cat, const std::string& dt)
+        : amount(amt), category(cat), date(dt) {}
+};
+
+class ExpenseTracker {
+private:
+    std::vector<Expense> expenses;
+
+public:
+    void addExpense(double amount, const std::string& category, const std::string& date) {
+        expenses.emplace_back(amount, category, date);
+    }
+
+    void editExpense(size_t index, double amount, const std::string& category, const std::string& date) {
+        if (index < expenses.size()) {
+            expenses[index].amount = amount;
+            expenses[index].category = category;
+            expenses[index].date = date;
+        }
+    }
+
+    void deleteExpense(size_t index) {
+        if (index < expenses.size()) {
+            expenses.erase(expenses.begin() + index);
+        }
+    }
+
+    void summarizeExpenses() {
+        std::unordered_map<std::string, double> summary;
+        for (const auto& expense : expenses) {
+            summary[expense.category] += expense.amount;
+        }
+
+        std::cout << "\nExpense Summary:\n";
+        std::cout << std::fixed << std::setprecision(2);
+        for (const auto& [category, total] : summary) {
+            std::cout << category << ": $" << total << "\n";
+        }
+    }
+};
+
+// Example usage
+int main() {
+    ExpenseTracker tracker;
+
+    // Adding expenses
+    tracker.addExpense(100.0, "Food", "2024-07-30");
+    tracker.addExpense(50.0, "Transport", "2024-07-30");
+    tracker.addExpense(200.0, "Food", "2024-07-30");
+    tracker.addExpense(30.0, "Entertainment", "2024-07-30");
+
+    // Editing an expense
+    tracker.editExpense(1, 60.0, "Transport", "2024-07-30");
+
+    // Deleting an expense
+    tracker.deleteExpense(3);
+
+    // Summarizing expenses
+    tracker.summarizeExpenses();
+
+    return 0;
+}
